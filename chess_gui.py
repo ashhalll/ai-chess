@@ -59,43 +59,64 @@ class ChessGUI:
     def create_info_panel(self):
         info_label = ctk.CTkLabel(
             self.left_panel,
-            text="Chess Variant with AI",
+            text="Advanced Chess Variant with AI",
             font=("Arial", 24, "bold")
         )
         info_label.pack(pady=10)
 
-        # Add explanation text with special variant rules
+        # Enhanced explanation text
         explanation = """
         🎮 Special Variant Rules:
-        • Pawns can make a double move from any rank
-        • Each pawn can use this ability once per game
+        • Pawns can make a double move from ANY rank
+        • This special ability can be used once per pawn
+        • Regular chess rules apply otherwise
 
-        🤖 AI Implementation:
-        • Minimax algorithm with Alpha-Beta pruning
-        • Search depth: 2-3 moves ahead
-        • Position evaluation includes:
-          - Material counting
-          - Center control bonus
-          - Piece mobility
+        🤖 Advanced AI Features:
+        • Minimax with Alpha-Beta Pruning (Depth 3)
+        • Sophisticated Position Evaluation:
+            - Material value
+            - Piece positioning
+            - Pawn structure analysis
+            - King safety evaluation
+            - Center control scoring
+            - Mobility assessment
 
-        💡 How to Play:
-        1. Click a piece to select
-        2. Click destination square to move
-        3. AI will respond automatically
+        🎯 Strategy Tips:
+        • Use pawn double-moves strategically
+        • Control the center early
+        • Protect your king with pawns
+        • Watch for tactical opportunities
+
+        ⚡ Quick Guide:
+        1. Click piece to select
+        2. Click target square to move
+        3. Invalid moves will be rejected
+        4. Watch for special notifications
         """
 
-        info_text = ctk.CTkTextbox(self.left_panel, width=250, height=300)
+        info_text = ctk.CTkTextbox(self.left_panel, width=280, height=400)
         info_text.pack(pady=10, padx=10)
         info_text.insert("1.0", explanation)
         info_text.configure(state="disabled")
 
-        # Add status label
+        # Enhanced status display
+        self.status_frame = ctk.CTkFrame(self.left_panel)
+        self.status_frame.pack(pady=10, fill="x", padx=10)
+
         self.status_label = ctk.CTkLabel(
-            self.left_panel,
-            text="White to move",
-            font=("Arial", 14)
+            self.status_frame,
+            text="Game Status: White to move",
+            font=("Arial", 14, "bold")
         )
-        self.status_label.pack(pady=10)
+        self.status_label.pack(pady=5)
+
+        self.check_label = ctk.CTkLabel(
+            self.status_frame,
+            text="",
+            font=("Arial", 12),
+            text_color="red"
+        )
+        self.check_label.pack(pady=5)
 
     def create_board(self):
         self.board_frame = ctk.CTkFrame(self.center_panel)
@@ -176,24 +197,51 @@ class ChessGUI:
 
         if self.selected_square is None:
             self.selected_square = square
+            piece = self.manager.game.board.piece_at(square)
+            if piece:
+                self.status_label.configure(text=f"Selected: {piece.symbol()} at {chess.square_name(square)}")
         else:
             try:
                 move_uci = chess.square_name(self.selected_square) + chess.square_name(square)
                 result = self.manager.make_user_move(move_uci)
 
-                # Add moves to history
-                move_text = f"White: {move_uci}\nBlack: {result['ai_move']}\n"
+                # Enhanced move history
+                from_square = chess.square_name(self.selected_square)
+                to_square = chess.square_name(square)
+                piece_symbol = self.manager.game.board.piece_type_at(square)
+                move_text = f"White: {piece_symbol} {from_square}-{to_square}\n"
+                move_text += f"Black: {result['ai_move']}\n"
                 self.history_text.insert("end", move_text)
                 self.history_text.see("end")
 
-                self.status_label.configure(text=f"AI moved: {result['ai_move']}")
-
+                # Update game status with detailed information
+                board = self.manager.game.board
                 if result['is_game_over']:
-                    messagebox.showinfo("Game Over", f"Result: {result['result']}")
+                    if board.is_checkmate():
+                        winner = "Black" if board.turn else "White"
+                        messagebox.showinfo("Checkmate!", f"Game Over - {winner} wins by checkmate!")
+                    elif board.is_stalemate():
+                        messagebox.showinfo("Stalemate!", "Game Over - Draw by stalemate")
+                    elif board.is_insufficient_material():
+                        messagebox.showinfo("Draw!", "Game Over - Draw by insufficient material")
+                    elif board.is_fifty_moves():
+                        messagebox.showinfo("Draw!", "Game Over - Draw by fifty-move rule")
+                    elif board.is_repetition():
+                        messagebox.showinfo("Draw!", "Game Over - Draw by repetition")
                     self.new_game()
+                else:
+                    # Update status for ongoing game
+                    if board.is_check():
+                        self.check_label.configure(text="⚠️ CHECK!")
+                    else:
+                        self.check_label.configure(text="")
+
+                    self.status_label.configure(
+                        text=f"Last move: {result['ai_move']}"
+                    )
 
             except ValueError:
-                messagebox.showerror("Error", "Invalid move!")
+                messagebox.showerror("Invalid Move", "That move is not allowed!")
             except RuntimeError as e:
                 messagebox.showerror("Error", str(e))
 
@@ -211,6 +259,18 @@ class ChessGUI:
     def resign_game(self):
         messagebox.showinfo("Game Over", "White resigns. Black wins!")
         self.new_game()
+
+    # Add method to create move notation
+    def get_piece_name(self, piece_type: int) -> str:
+        names = {
+            chess.PAWN: "Pawn",
+            chess.KNIGHT: "Knight",
+            chess.BISHOP: "Bishop",
+            chess.ROOK: "Rook",
+            chess.QUEEN: "Queen",
+            chess.KING: "King"
+        }
+        return names.get(piece_type, "")
 
 def main():
     app = ChessGUI()

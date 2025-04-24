@@ -47,7 +47,7 @@ class ChessGUI:
 
     def create_layout(self):
         # Create main frames
-        self.left_panel = ctk.CTkFrame(self.window, width=300)
+        self.left_panel = ctk.CTkFrame(self.window, width=310)
         self.left_panel.pack(side="left", fill="y", padx=10, pady=10)
 
         self.center_panel = ctk.CTkFrame(self.window)
@@ -60,7 +60,7 @@ class ChessGUI:
         info_label = ctk.CTkLabel(
             self.left_panel,
             text="Chess Variant with AI",
-            font=("Arial", 20, "bold")
+            font=("Arial", 24, "bold")
         )
         info_label.pack(pady=10)
 

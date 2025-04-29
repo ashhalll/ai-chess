@@ -81,37 +81,12 @@ python src/chess_gui.py
 ## 📁 Project Structure
 ```
 chess-variant/
-├── src/
 │   ├── ai.py           # AI engine implementation
 │   ├── game.py         # Core game logic and rules
 │   ├── main.py         # Game management
 │   └── chess_gui.py    # GUI implementation
-├── tests/
-│   ├── test_ai.py
-│   ├── test_game.py
-│   └── test_main.py
-├── assets/
-│   └── gameplay.gif
-├── requirements.txt
 ├── README.md
-└── LICENSE
 ```
-
-## 👥 Team
-- **Ashhal** - Project Lead & GUI Development
-  - Implemented modern user interface
-  - Coordinated project development
-  - Documentation management
-
-- **Omer** - AI Algorithm Specialist
-  - Developed Minimax implementation
-  - Created evaluation functions
-  - Optimized AI performance
-
-- **Hassan** - Game Logic Developer
-  - Implemented core chess rules
-  - Created variant rule system
-  - Testing and optimization
 
 ## 📊 Performance
 - Average move calculation: ~2 seconds
@@ -132,15 +107,4 @@ python-chess==1.9.4
 customtkinter==5.2.0
 pillow==9.5.0
 ```
-
-## 🤝 Contributing
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
-## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ---
-
-<p align="center">
-  Made with ❤️ by Team Chess Variant
-</p>

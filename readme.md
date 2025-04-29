@@ -9,6 +9,9 @@
   <img src="assets/gameplay.gif" alt="Chess Variant Gameplay" width="600"/>
 </p>
 
+Check out the demo video of the project here:  
+[▶️ Watch on Google Drive](https://drive.google.com/drive/folders/1hkkCBEeXxB9HJb59hyZTMr0esMK7LEjO?usp=drive_link)
+
 ## 📑 Table of Contents
 - [Features](#-features)
 - [Special Rules](#-special-rules)
